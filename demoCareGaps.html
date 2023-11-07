@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- *** NB! The following emptry :root{} must be the first style on the page. *** -->
+    <style>
+        :root {}
+    </style>
+
+    <title>Care Gaps</title>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+
+    <!--  Fonts and icons -->
+    <!-- <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <!--  Logger  -->
+    <link rel="stylesheet" type="text/css" href="assets/css/logger.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/sidepanelSplit.css">
+
+    <!--  JSON Viewer  -->
+    <link rel="stylesheet" type="text/css" href="assets/css/jquery.json-viewer.css">
+
+    <!-- Stepped Progress Bar (spb) -->
+    <link rel="stylesheet" type="text/css" href="assets/css/steppedProgress.css">
+
+    <!-- Flip card -->
+    <link rel="stylesheet" type="text/css" href="assets/css/flipcard.css">
+
+    <!-- Resizing tabs -->
+    <link rel="stylesheet" type="text/css" href="assets/css/resizingTabs.css">
+
+    <!-- Tabulator (fhirGrid) -->
+    <link rel='stylesheet' type="text/css" href="https://unpkg.com/tabulator-tables/dist/css/tabulator_modern.min.css">
+
+    <!--  Fullcalendar (scheduling)  -->
+    <link rel='stylesheet' type="text/css" href='assets/css/fc-core-main.css'>
+    <link rel='stylesheet' type="text/css" href='assets/css/fc-timegrid-main.css'>
+
+    <!--  flow chart connectors and dynamic grid   -->
+    <link rel='stylesheet' type="text/css" href='assets/css/abcFlow.css'>
+
+    <style>
+        :root {
+            --textRevealDuration: 3s;
+            --emrBackgroundColor: #8ac;
+        }
+
+        body {
+            font-family: "Lato", sans-serif;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .abcButton {
+            padding: 3px;
+            border-radius: 3px;
+            background-color: #c6c9cc;
+        }
+
+        .abcButton:hover {
+            background-color: #1C2833;
+            color: #af0;
+            cursor: pointer;
+        }
+
+        /* .mockEMR = the mock EMR */
+        .mockEMRContainer {
+            display: flex;
+            flex-flow: column;
+            height: 100vh;
+            overflow: auto;
+            box-sizing: border-box;
+        }
+
+        .mockEMRContainer pre,
+        .mockEMRContainer span,
+        .mockEMRContainer div {
+            /* Set width to 1 for debugging */
+            border: 0px solid #0f0;
+            box-sizing: border-box;
+        }
+
+
+        .mockEMRContainer .rowTitle {
+            min-height: 40px;
+            background: var(--emrBackgroundColor);
+            display: flex;
+            align-items: center;
+            filter: drop-shadow(0px 1px 2px #000);
+        }
+
+
+        .mockEMRContainer .rowTitle .alignRight {
+            margin-left: auto;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .mockEMRContainer .headingTitle {
+            font: oblique bold 24px arial;
+            color: #fff;
+            filter: drop-shadow(0px 0px 2px #000);
+        }
+
+        .mockEMRContainer .headingTitle2 {
+            font: bold 16px arial;
+            color: #fff;
+        }
+
+        .mockEMRContainer .rowBody {
+            flex: 1;
+            /* overflow-y: auto; */
+            overflow-y: hidden;
+            overflow-x: hidden;
+            margin: 5px 5px 0px 5px;
+        }
+
+        .mockEMRContainer .rowFooter {
+            font: 14px arial;
+            color: #fff;
+            background: var(--emrBackgroundColor);
+            filter: drop-shadow(0px 1px 2px #000);
+            padding-left: 6px;
+        }
+
+        .mockEMRContainer .rowFooter .popup {
+            color: #af0;
+        }
+
+        .mockEMRContainer .bodyRow {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+        }
+
+        .mockEMRContainer .bodyRow .emr {
+            width: 60%;
+            height: 100%;
+            background-color: #cef;
+        }
+
+        .mockEMRContainer .bodyRow .abcAPIContainer {
+            flex: 1;
+            overflow: auto;
+            height: 100%;
+        }
+
+        .mockEMRContainer .button {
+            background-color: var(--emrBackgroundColor);
+            border: none;
+            color: #fff;
+            font-weight: bold;
+            padding: 10px 20px;
+            text-align: center;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #ffffff00;
+        }
+
+        .mockEMRContainer .button:hover {
+            color: var(--emrBackgroundColor);
+            background-color: #1c2833;
+            border: 2px solid var(--emrBackgroundColor);
+            filter: drop-shadow(0px 0px 2px var(--emrBackgroundColor));
+            cursor: pointer;
+        }
+
+        .mockEMRContainer .cgrRow:hover {
+            background-color: var(--rowHighlightColor);
+            cursor: pointer;
+        }
+
+        .mockEMRContainer .dsList li {
+            border: 1px solid #ccc;
+            background-color: #fff;
+            padding: 3px 10px;
+            margin: 2px;
+        }
+
+        .mockEMRContainer .dsList li:hover {
+            border: 1px solid #444;
+            background-color: var(--rowHighlightColor);
+            cursor: pointer;
+        }
+
+        .mockEMRContainer .text-focus-in {
+            position: relative;
+            animation: text-focus-in var(--textRevealDuration) linear;
+        }
+
+        /* fullCalendar draggable element; placed inside Tabulator */
+        .fcDraggableEvent {
+            background-color: #f9f9f9;
+            cursor: move;
+            border-radius: 5px;
+        }
+
+        @keyframes text-focus-in {
+            0% {
+                filter: blur(12px);
+                opacity: 0;
+                top: -50px;
+            }
+
+            100% {
+                filter: blur(0px);
+                opacity: 1;
+                top: 0px;
+            }
+        }
+    </style>
+
+    <script>
+        /*************** Global Data Parameters ***************/
+        let dataParams = {
+            servers: [{ //credentials: fill in if you wish (obviously INSECURE!!!), leave blank for anonymous / to be prompted in webGUI
+                "server": "http://localhost:8000/",
+                un: "admin",
+                pw: "password"
+            }, {
+                "server": "https://hapi.fhir.org/baseR4/",
+                un: "",
+                pw: ""
+            }, {
+                "server": "https://try.smilecdr.com/baseR4/",
+                un: "",
+                pw: ""
+            }, {
+                "server": "https://himssdqm.salessbx.smiledigitalhealth.com/fhir/",
+                un: "",
+                pw: ""
+            }],
+            baseURL: "",
+            baseCredentials: "",
+            crQueries: {
+                openGapList: "Parameters?gap-status=open-gap&_sort=-_lastUpdated",
+                // openGapList: "Measure/$care-gaps?periodStart=2020-01-01&periodEnd=2020-12-31&status=open-gap&status=closed-gap&subject=Patient/{ptID}&measureId=ColorectalCancerScreeningsFHIR",
+                labResults: "DocumentReference/181",    //Mock GET. This is really a base64 encoding of stringified JSON or the mock MeasureReport to be posted
+                measureReportPOST: "Measure/{ptID}/$submit-data",   //Take the mock data from labResults and POST it
+                closedGapList: "Measure/$care-gaps?periodStart=2020-01-01&periodEnd=2020-12-31&status=open-gap&status=closed-gap&subject=Patient/{ptID}&measureId=ColorectalCancerScreeningsFHIR",
+                decisionSupport: "PlanDefinition/cc-cds/$apply?patient={ptID}",
+            }
+        };
+        dataParams.baseURL = dataParams.servers[3].server;
+
+        //Get the parameter value from the subsection first; otherwise get it from the root
+        getParam = (paramList, section, param) => {
+            return paramList[section][param] || paramList[param]
+        }
+
+
+        /*************** Mock EMR functions ***************/
+        var Logger; //Global variable for the API Monitor
+        var dqmPtListData = []; //Global variable for data to be added to the dqmPtList grid
+
+        //Look for a variable and replace it with dataParams.variable e.g.: url/Patient/{ptID} ==> url/Patient/<dataParams.ptID>
+        //TODO: I cheated and did this quick and dirty, hardcoded for ptID. Make this work for any variable; and use getParam so that it will search multi-levels within dataParams.
+        apiReplaceVar = (api) => {
+            if (api.search("{") >= 0) {
+                api = api.replace(/{ptID}/g, dataParams.curCareGap.ptID);
+            }
+            return api;
+        }
+
+        //Retrieve the open Care Gaps from the server, and extract (via FHIRPath or JSONPath) the appropriate data elements
+        careGapsList = (tabulatorGrid, queryName, populateNextAppointment) => {
+            dqmPtListData = [];
+            APICall(dataParams.crQueries[queryName], function (ret) {
+                JSONPath.JSONPath({ //Composition: extract all compositions by finding resourceType=Composition, and traversing 1 level up to get the full object
+                    json: ret,
+                    path: '$...*[?(@property==="resourceType" && @.match(/Composition/))]^',
+                    callback: (data) => {   //Iterate through all Compositions (****** This assumes 1 composition per caregap. I'll need to modify if a composition contains an array of care gaps)
+                        const careGapName = JSONPath.JSONPath({ path: '$..section..title', json: data })[0];
+                        const ptID = JSONPath.JSONPath({ path: '$..subject[?(@property==="reference")]', json: data })[0].replace(/Patient\//, "");
+                        const detectedIssueID = JSONPath.JSONPath({ path: '$..section..entry..reference', json: data })[0].replace(/DetectedIssue\//, "");
+                        const measureReportID = JSONPath.JSONPath({ path: '$..section..focus..reference', json: data })[0].replace(/MeasureReport\//, "");
+                        const ptObj = JSONPath.JSONPath({ json: ret, path: `$..*[?(@property==="id" && @.match(/${ptID}/))]^` })[0];
+                        const ptName = JSONPath.JSONPath({ path: "$..name..family^..given", json: ptObj })[0] + " " + JSONPath.JSONPath({ path: "$..name..family", json: ptObj })[0];
+                        const ptNameLF = JSONPath.JSONPath({ path: "$..name..family", json: ptObj })[0] + ", " + JSONPath.JSONPath({ path: "$..name..family^..given", json: ptObj }).join(' ');
+                        const detectedIssueObj = JSONPath.JSONPath({ json: ret, path: `$..*[?(@property==="id" && @.match(/${detectedIssueID}/))]^` })[0];
+                        const careGapStatusValue = JSONPath.JSONPath({ json: detectedIssueObj, path: '$..modifierExtension..valueCodeableConcept..coding..display' })[0];
+                        // $..resource[?(@property==="resourceType" && @.match(/Parameters/))]^..resource[?(@property==="resourceType" && @.match(/DetectedIssue/))]^..modifierExtension..valueCodeableConcept..coding..display
+                        const measureReportObj = JSONPath.JSONPath({ json: ret, path: `$..*[?(@property==="id" && @.match(/${measureReportID}/))]^` })[0];
+                        const measureReportDate = new Date(JSONPath.JSONPath({ json: measureReportObj, path: '$..date' })[0]);     //This date is in the Parameters query, but not in the Measure/$care-gaps query
+                        // $..resource[?(@property==="resourceType" && @.match(/Parameters/))]^..resource[?(@property==="resourceType" && @.match(/Bundle/))]^..timestamp
+                        //const measureReportDate = new Date(JSONPath.JSONPath({ json: ret, path: '$..resource[?(@property==="resourceType" && @.match(/Composition/))]^..subject[?(@property==="reference" && @.match(/end-to-end-EXM130$/))]^^..date' })[0]);     //This date = now(). Watch out for hard-coded patient ID. replace with ${id}
+                        //const measureReportDate = new Date(JSONPath.JSONPath({ json: ret, path: '$..resource[?(@property==="resourceType" && @.match(/Parameters/))]^..resource[?(@property==="resourceType" && @.match(/Bundle/))]^..timestamp' })[0]);  //This is the one suggested by Rob; but it doesn't work with the /Measure/$care-gaps
+                        //const measureReportAging = Math.round(Math.random() * 95) + 5;
+                        const now = new Date();
+                        const measureReportAging = Math.round((now - measureReportDate.getTime()) / 86400000);
+                        const dec31 = new Date(now.getFullYear(), 11, 31);
+                        const daysToEOY = Math.ceil((dec31 - now)/86400000)
+                        const row = {
+                            "ptID": ptID,
+                            "detectedIssueID": detectedIssueID,
+                            "measureReportID": measureReportID,
+                            "ptName": ptName,
+                            "ptNameLF": ptNameLF,
+                            "careGapName": careGapName,
+                            "careGapStatusValue": careGapStatusValue,
+                            "measureReportDate": measureReportDate,
+                            //"measureReportAging": measureReportAging,     //Days open
+                            "measureReportAging": daysToEOY,
+                            "nextAppointment": "",
+                        }
+                        dqmPtListData.push(row);
+                    },
+                });
+                //After adding rows to the grid, update the Next Appointment column (via a separate API call)
+                if (populateNextAppointment) {
+                    Logger.addTextLog("For each open Care Gap, get the patient's next encounter:<br>&lt;FHIR server&gt;/<span class='emphasize'>Encounter</span>", "", false);
+                }
+                tabulatorGrid.addData(dqmPtListData).then(function () {
+                    for (var i = 0; i < dqmPtListData.length; i++) {
+                        const diID = dqmPtListData[i].detectedIssueID;
+                        if (dqmPtListData[i].careGapStatusValue == "Open Gap") {
+                            APICall("Encounter?status=planned", function (ret) { //Encounter?status=planned&subject=Patient/123
+                                let nextEncDate = new Date(JSONPath.JSONPath({ json: ret, path: "$..lastUpdated" }).sort()[0]);
+                                nextEncDate = nextEncDate.getFullYear() + "-" + monthExpand(nextEncDate.getMonth(), 3) + "-" + nextEncDate.getDate();
+                                tabulatorGrid.updateData([{ "detectedIssueID": diID, nextAppointment: nextEncDate }]);
+                            });
+                        } else {
+                            let nextEncDate = `<img src="assets/img/ok.png" height=24 style="vertical-align: middle;"> Gap Closed`;
+                            tabulatorGrid.updateData([{ "detectedIssueID": diID, nextAppointment: nextEncDate }]);
+                        }
+                    }
+                    tabulatorGrid.setSort([{ column: "measureReportAging", dir: "desc" }]);
+                });
+            });
+        }
+
+        //Retrieve the Decision Support for the given patient and Care Gap; and, populate the list of procedures
+        careGapsDS = (queryName) => {
+            APICall(dataParams.crQueries[queryName], function (ret) {
+                //Parse out the decision support recommendation
+                const recommendedDS = JSONPath.JSONPath({ path: '$..*[?(@property === "resourceType" && @ === "ServiceRequest")]^..code..coding', json: ret })[0][0];
+                const dsCode = recommendedDS.system + "|" + recommendedDS.code;
+                const dsDisplay = recommendedDS.display;
+                const dsDesc = JSONPath.JSONPath({ path: '$..*[?(@property === "resourceType" && @ === "RequestGroup")]^..action..title', json: ret })[0];
+                const row = {
+                    "dsCode": dsCode,
+                    "dsDisplay": dsDisplay,
+                    "dsDesc": dsDesc,
+                }
+                dataParams.decisionSupport = row;
+                //Populate the list of screening tests
+                dataParams.screeningTests = [
+                    { name: "Colonoscopy", selected: (dsCode == "http://snomed.info/sct|73761001" ? true : false), value: "http://snomed.info/sct|73761001" }, //Georgie
+                    { name: "Fecal Occult Blood Test", selected: (dsCode == "tbd" ? true : false), value: "tbd" },
+                    { name: "Flexible Sigmoidoscopy", selected: (dsCode == "http://snomed.info/sct|44441009" ? true : false), value: "http://snomed.info/sct|44441009" },  //Tanis
+                    { name: "Fecal Immunochemical Test DNA", selected: (dsCode == "http://snomed.info/sct|457591000124105" ? true : false), value: "http://snomed.info/sct|457591000124105" },    //Justin
+                    { name: "CT Colonography", selected: (dsCode == "http://snomed.info/sct|418714002" ? true : false), value: "http://snomed.info/sct|418714002" },    //Agnes, Jerred
+                ];
+                let s = "";
+                for (var i = 0; i < dataParams.screeningTests.length; i++) {
+                    s += `<li><label><input name="radio-buttons" value="${dataParams.screeningTests[i].value}" type="checkbox" class="lrOption" ${(dataParams.screeningTests[i].selected) ? "checked" : ""}
+                            onclick="dataParams.screeningTests[${i}].selected = this.checked"> ${dataParams.screeningTests[i].name}</label></li>`;
+                }
+                document.getElementById("cgrCareGap2").innerHTML = dataParams.curCareGap.careGapName;
+                document.getElementById("lrLabReqList").innerHTML = s;
+                document.getElementById("lrDSRecommendation").innerHTML = dsDesc;
+                document.getElementById("lrSubmitButton").style.visibility = "visible";
+            })
+        };
+
+        //Slowly reveal the text for the "Lab Test Performed" screen
+        labReqRevealText = () => {
+            setTimeout(() => {
+                const txt = [
+                    `<br><br>1. Some time over the next few days the patient <b>${dataParams.curCareGap.ptName}</b> <i>visits</i> the clinic where a GI specialist will perform the colonoscopy screening test.`,
+                    `2. The specialist <i>performs</i> the screening test(s) <b>${dataParams.orderedLabs}</b>.`,
+                    `3. The results of the screening test(s) are <i>sent</i> back to the provider.`,
+                    `4. The provider's EMR <i>ingests</i> the results.`,
+                    `5. The provider's Smile FHIR server sees that the screening test has been completed, <b>automatically reruns</b> the care gap report, and the new care gap report shows that the care gap has been closed (as the required screening test has now been performed).`,
+                    `6. The provider's office <i>schedules</i> a follow-up visit with patient <b>${dataParams.curCareGap.ptName}</b>.`,
+                    `<br><br>`,
+                    `<input type="button" class="button" value="${dataParams.curCareGap.ptName}: return to provider for follow-up visit" onclick="spbNext()">`,
+                ]
+                addHTMLel(`cgrLabTestDetailsTxt${dataParams.reveal}`, ((dataParams.reveal < txt.length - 1) ? "text-focus-in" : ""), document.getElementById("cgrLabTestDetails"));
+                document.getElementById(`cgrLabTestDetailsTxt${dataParams.reveal}`).innerHTML = `${txt[dataParams.reveal]}<br><br>`;
+                if (dataParams.reveal == 3) {
+                    //Retrieve the lab results
+                    Logger.addTextLog("For this demo we will retrieve mock procedure results for a colonoscopy:<br>&lt;FHIR server&gt;/<span class='emphasize'>DocumentReference</span>", "", false);
+                    APICall(dataParams.crQueries["labResults"], function (ret) {
+                        //The replaceAll is necessary as I saved the lab result for ptID "end-to-end-EXM130" as a DocumentReference resource, and it was hardcoded to this patient ID
+                        dataParams.rpt = JSON.parse(JSON.parse(atob(ret.content[0].attachment.data)).replaceAll("end-to-end-EXM130", dataParams.curCareGap.ptID)); //OMG, did this ever f* me up. I had to parse this twice.
+                    });
+                };
+                if (dataParams.reveal == 5) {
+                    //Close the Care Gap. POST MeasureReport
+                    Logger.addTextLog("The Smile FHIR server detects the colonoscopy and submits a Measure Report, which will close the Care Gap:<br>&lt;FHIR server&gt;/<span class='emphasize'>Measure/.../$submit-data</span>", "", false);
+                    APICall(dataParams.crQueries["measureReportPOST"], function (ret) {
+                        // console.log(ret)
+                    }, "POST", dataParams.rpt, { "Content-Type": "application/json" });
+                };
+                dataParams.reveal++;
+                if (dataParams.reveal < txt.length) { labReqRevealText() }
+            }, 800);
+        }
+
+        //Stepped Progress Bar onChange
+        function spbChange() {
+            abcActorNext(); //Advance the story board (abcActor)
+
+            let section = $('#steppedProgressBar').data('current-step');
+            switch (section) {
+                case 2: //Populate the Care Gaps grid
+                    Logger.addTextLog("Retrieve open Care Gaps", "heading2", false);
+                    Logger.addTextLog("Execute the $care-gap operation:<br>&lt;FHIR server&gt;/<span class='emphasize'>Measure/$care-gaps</span>", "", false);
+                    careGapsList(dqmPtList, "openGapList", true);
+                    break;
+                case 3: //Populate the Care Gaps Report table
+                    setTimeout(() => {  //Need to give the Logger a chance to write the message from the Tabulator.click event before the Logger writes the following events.
+                        Logger.addTextLog("EMR: Doctor-Patient Encounter: Care-Gap Report", "heading2", false);
+                        Logger.addTextLog("The Care Gap has been copied from the previous screen. In a real world scenario the EMR would call the FHIR server and request either the specific Care Gap or all open Care Gaps for the given patient.", "", false);
+                        document.getElementById("cgrPtName").innerHTML = dataParams.curCareGap.ptName;
+                        document.getElementById("cgrCareGap").innerHTML = dataParams.curCareGap.careGapName;
+                        document.getElementById("cgrDaysOpen").innerHTML = dataParams.curCareGap.measureReportAging;
+                    }, 500);
+                    break;
+                case 4: //Populate the Screening Tests
+                    Logger.addTextLog("EMR: Doctor-Patient Encounter: Screening test ordered", "heading2", false);
+                    Logger.addTextLog(`Care Gap: "${dataParams.curCareGap.careGapName}" selected`, "", false);
+                    Logger.addTextLog(`Call Clinical Reasoning --> Decision Support for ${dataParams.curCareGap.ptName}`, "", false);
+                    careGapsDS("decisionSupport");
+                    break;
+                case 5: //Activities that happend outside of this demo: Patient gets lab tests performed
+                    dataParams.orderedLabs = "";
+                    for (var i = 0; i < dataParams.screeningTests.length; i++) {
+                        if (dataParams.screeningTests[i].selected == true) dataParams.orderedLabs += (dataParams.orderedLabs.length > 0 ? ", " : "") + dataParams.screeningTests[i].name;
+                    }
+                    Logger.addTextLog(`Screening test(s) ordered <b>${dataParams.orderedLabs}</b>`, "", false);
+                    Logger.addTextLog("Patient has screening test(s) performed", "heading4", false);
+                    // Logger.addTextLog(`This portion of the workflow is external to this demo.`, "", false);
+                    dataParams.reveal = 0;
+                    document.getElementById("cgrLabTestDetails").innerHTML = "";
+                    labReqRevealText();
+                    break;
+                case 6: //
+                    Logger.addTextLog("EMR: Doctor-Patient Follow-up Encounter", "heading2", false);
+                    careGapsList(dqmPtList2, "closedGapList", false);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        //Flip the card with the given cardID        
+        abcCardFlip = (cardID) => {
+            document.getElementById(cardID).classList.toggle('is-flipped');
+        }
+
+        //Define the contents for the story board (within abcActor)
+        let abcActorStage = 1;  //current actor story; see abcActorNext()
+        let abcActorActor;      //current actor; see abcActorNext()
+        abcActorNext = () => {
+            switch (abcActorStage) {
+                case 0:
+                    abcActorActor = "Admin"
+                    s = `<div id="abcStoryContent" class="abcStoryContent ${abcActorActor}">
+                        <p>Loading...</p>
+                        </div>`;
+                    break;
+                case 1:
+                    abcActorActor = "Admin";
+                    s = `<div id="abcStoryContent" class="abcStoryContent ${abcActorActor}">
+                        <p><i>As we progress through this demo we'll change actors between the Provider, Patient, and the Office Administrator. We'll let you know who the current actor is right here.</i></p>
+                        <p><i>Note: You can click the <i class="fa fa-repeat"></i> icon in the top-right to see the server interactions and learn how to integrate Care Gaps management
+                        into your environment. We suggest you run through the demo once before viewing the server interactions.</i></p>
+                    </div>`;
+                    break;
+                case 2:
+                    abcActorActor = "Admin";
+                    s = `<div id="abcStoryContent" class="abcStoryContent ${abcActorActor}">
+                        <p>This scenario starts with a Clinical Support Staff using the Smile Digital Quality Measure module, Care Gap Worklist feature to monitor a patient population for
+                        gaps in care prospectively. They will identify patients at risk of open care gaps related to the Colorectal Cancer Screening Quality Measure. Then they can
+                        easily schedule an appointment so the patient and clinician can discuss options for ensuring recommended treatment to prevent a gap in care.</p>
+                        <p><i>You are now playing the role of an office <b>Admin</b>istrator.</i></p>
+                            <ol><li>Drag a patient(s) at left to the calendar.
+                                <li>Click on an appointment in the calendar to jump to that Patient-Provider encounter.
+                            </ol>
+                    </div>`;
+                    break;
+                case 3:
+                    abcActorActor = "Provider";
+                    s = `<div id="abcStoryContent" class="abcStoryContent ${abcActorActor}">
+                        <p>During the patient visit, the Smile Digital Quality Measure module requests a Gaps in Care report. The clinician (provider) is notified of the resulting risks for gaps in care.</p>
+                        <p><i>Within your EMR, Select <b>Colorectal Cancer ScreeningFHIR</b> to start the process of closing it.</i></p>
+                        </div>`;
+                    break;
+                case 4:
+                    abcActorActor = "Provider";
+                    s = `<div id="abcStoryContent" class="abcStoryContent ${abcActorActor}">
+                        <p>The Smile Clinical Decision Support module provides the clinician with treatment recommendations based on the evidence-based American Cancer Society’s Guidelines for Colorectal
+                            Cancer Screening to avoid a gap in care.</p>
+                        <p><i>You can go with the recommended procedure/test and/or select a different one.</i></p>
+                    </div>`;
+                    break;
+                case 5:
+                    abcActorActor = "Patient";
+                    s = `<div id="abcStoryContent" class="abcStoryContent ${abcActorActor}">
+                        <p>Once the recommended intervention has been completed, the data relative to the Colorectal Cancer Screening Quality Measure is submitted to the Smile Digital Quality Measure server.</p>
+                    </div>`;
+                    break;
+                case 6:
+                    abcActorActor = "Provider";
+                    s = `<div id="abcStoryContent" class="abcStoryContent ${abcActorActor}">
+                        <p>During a subsequent patient visit, the Smile Digital Quality Measure module requests a new Gaps in Care report, which then shows that the patient has received treatment that meets the
+                            Colorectal Cancer Screening Quality Measure requirements.  The care gap risk has been proactively mitigated.</p>
+                        <p><i>To reset the data on the server and restart the demo, click the <i class="fa fa-recycle resetDemo"></i> icon in the title at top left.</i></p>
+                    </div>`;
+                    break;
+            }
+            abcActorStage++;
+            abcActorFocus("abcStory" + abcActorActor, s);
+        }
+
+        //Animate the transition when between story boards, i.e. shift focus to another actor/tab {Provider, Patient, Admin} (within abcActor)
+        async function abcActorFocus(actorNew, content) {
+            actorNew = document.getElementById(actorNew);
+            const actorOld = document.getElementsByClassName("focus")[0];
+            const sectionOld = document.getElementById(actorOld.id + "Main");
+            const sectionNew = document.getElementById(actorNew.id + "Main");
+            const fade = getComputedStyle(document.documentElement).getPropertyValue("--abcStoryActorFadedOpacity");
+            addTransition(actorOld, { //background tab
+                flex: 2,
+                opacity: fade,
+                // "margin-top": "2px", //enable when we use rounded tabs
+            }, 1000);
+            addTransition(actorNew, {   //foreground tab
+                flex: 5,
+                opacity: 1,
+                // "border-bottom": "1px solid #e94;",  //enable when we use rounded tabs
+                // "margin-top": "-2px",                //enable when we use rounded tabs
+            }, 1000);
+            await addTransition(sectionOld, {   //story content to fade out
+                opacity: 0,
+            }, 200);
+            sectionOld.style.display = "none";
+            sectionNew.style.display = "block";
+            sectionNew.style.opacity = 0;
+            sectionNew.innerHTML = content;
+            setTimeout(() => {  //await was giving me a difficult time, so I just went with a timeout
+                addTransition(sectionNew, { //story content to fade in
+                    opacity: 1,
+                }, 500);
+            }, 300);
+            if (actorOld.id != actorNew.id) {
+                actorNew.classList.add("focus");
+                actorNew.classList.remove("regular");
+                actorOld.classList.add("regular");
+                actorOld.classList.remove("focus");
+            }
+            // Change the EMR Background Color to match the current Actor's color
+            const sty = getComputedStyle(document.documentElement).getPropertyValue("--abcStoryActor" + actorNew.id.substring(8));
+            updateStyleRule(":root", "--emrBackgroundColor", sty);
+        }
+
+        //Toggle open/close the sidePanel
+        toggleSidepanel = () => {
+            let expanded = document.getElementById("sidepanelOutside").getAttribute("expanded");
+            if (expanded === "false") expanded = false; // "false" != false
+            let expandedWidth = getComputedStyle(document.querySelector(":root")).getPropertyValue("--sidepanelExpandedWidth");
+            var fromSize, toSize;
+            if (expanded) {
+                fromSize = expandedWidth;
+                toSize = 0;
+                document.getElementById("sidepanelOutside").setAttribute("expanded", "false");
+            } else {
+                fromSize = 0;
+                toSize = expandedWidth;
+                document.getElementById("sidepanelOutside").setAttribute("expanded", "true");
+            }
+            sidepanelResize(fromSize, toSize, 20);
+            let circleLeft = (expanded) ? -6 : 5;
+            $('.circle').animate({
+                "margin-left": circleLeft
+            }, function () {
+                $('.fa-chevron-left').toggleClass('hide');
+                $('.fa-chevron-right').toggleClass('hide');
+            });
+        }
+
+        //Reset the demo: Reset data on the server, and reload the page
+        careGapsResetDemo = () => {
+            alert("add function to reset the demo");
+        }
+
+
+
+        //Window resize actions
+        winResizeEvent = () => {
+            document.getElementById("abcLogger").style.height = window.innerHeight + "px";
+            updateStyleRule(":root", "--viewportWidth", window.innerWidth + "px");
+        }
+
+        //Pseudo-animate resizing of the side panel. (Change a CSS variable over time to cause the animation; easier than animating all the elements based on this variable)
+        sidepanelResize = (sizeFrom, sizeTo, steps, curStep = 0) => {
+            sizeFrom = parseInt(sizeFrom);
+            sizeTo = parseInt(sizeTo);
+            updateStyleRule(":root", "--sidepanelWidth", `${(sizeTo - sizeFrom) / steps * curStep + sizeFrom}px`);
+            if (curStep < steps) {
+                setTimeout(() => {
+                    sidepanelResize(sizeFrom, sizeTo, steps, ++curStep);
+                }, 10);
+            }
+        }
+
+        //Add a popup (mouseover) event, and the corresponding mouseout
+        abcAddPopup = (elName, msg) => {
+            const elID = document.getElementById(elName);
+            elID.addEventListener("mouseover", () => { abcFooterMsg(msg) });
+            elID.addEventListener("mouseout", () => { abcFooterMsg("") });
+        }
+
+        //Update the message in the footer. If cls is not specified, the popup class will be used.
+        abcFooterMsg = (msg, cls) => {
+            const ftr = document.getElementById("mockEMRFooter");
+            if (msg) {  //Store the current footer message (to replace the popup msg)
+                dataParams.footerMsg = ftr.innerHTML;
+                cls = cls ? cls : "popup";
+                msg = `<span class="${cls}">${msg}</span>`;
+            } else {
+                msg = dataParams.footerMsg;
+            }
+            ftr.innerHTML = msg;
+        }
+
+        //Page-loaded functions
+        window.addEventListener('load', function () {
+            Logger = new abcLogger();
+            Logger.addTextLog("<img src='assets/img/sdh200.png' height=24 style='vertical-align: middle;'>&nbsp;&nbsp; API Monitor", "heading1", false);
+            //Add container for abcFlow inside the API Monitor
+            Logger.addTextLog(`<div class="containerForAbcFlow"><div id="abcFlowContainer" class="abcFlowContainer"></div></div>`, " ", false);
+            //Construct the abcFlow object, then add a row, then a cell, then content (client device icon)
+            ApiFlow = new abcFlow("abcFlowContainer");
+            ApiFlow.gridAdd("abcFlowContainer", "row", "abcFlowGrid");
+            let temp = ApiFlow.gridAdd("abcFlowGrid");
+            document.getElementById(temp).innerHTML = '<img id="clientDevice" src="assets/img/clientdevices.png" style="width: 50px;"><span style="position:relative; top:30px; left:-39px;">(me)</span>';
+
+
+            changeServer();
+
+            $('.circle').click(function () {
+                toggleSidepanel();
+            });
+            winResizeEvent();
+
+            dqmPtList_render();     //Initial patient encounter
+            dqmPtList2_render();    //Follow-up visit
+
+            abcActorNext();     //Set the abcActor to the first story board
+
+            setTimeout(() => {  //Open the sidePanel by default when the page is loaded
+                toggleSidepanel();
+            }, 1500);
+
+            //Add popup alerts
+            abcAddPopup("careGapsResetDemoButton", "Reset the Care Gaps demo");
+            abcAddPopup("flipCareButton", "Toggle between Demo Narration and API Monitor");
+            abcAddPopup("toggleSidePanelButton", "Toggle side panel visibility");
+
+        });
+
+        window.addEventListener('resize', function () {
+            winResizeEvent();
+        })
+
+    </script>
+</head>
+
+
+<body>
+
+    <div id="sidepanelOutside" class="sidepanelOutside">
+        <div id="sidepanelLeft" class="sidepanelLeft">
+            <div class="mockEMRContainer">
+                <!-- MockEMR Heading row -->
+                <div class="rowTitle">
+                    <span class="headingTitle2" style="margin-left: 10px;">
+                        </i> Demo <i class="fa fa-arrow-circle-right"></i> Clinical Reasoning <i class="fa fa-arrow-circle-right"></i> Care Gaps <i id="careGapsResetDemoButton"
+                            class="fa fa-recycle abcButton" onclick="careGapsResetDemo()"></i>
+                    </span>
+                    <span class="alignRight">
+                        <span class="headingTitle">&nbsp;&nbsp;&nbsp;Mock EMR&nbsp;&nbsp;&nbsp;</span>
+                        <img src="assets/img/sdh200.png" height="40">
+                    </span>
+                </div>
+
+                <!-- MockEMR Main Body -->
+                <div class="rowBody">
+                    <div class="bodyRow">
+                        <!-- ********** START: Mock EMR Content ********** -->
+
+                        <!-- START: Stepped Progress Bar -->
+                        <div class="step-1" id="steppedProgressBar" data-current-step="1" style="top: 10px;">
+                            <div class="progress-bar">
+
+                                <div class="step step-1 active"><span> 1</span>
+                                    <div class="fa fa-check opaque"></div>
+                                    <div class="step-label"> Introduction</div>
+                                </div>
+                                <div class="step step-2"><span> 2</span>
+                                    <div class="fa fa-check opaque"></div>
+                                    <div class="step-label">
+                                        Care Gap List
+                                    </div>
+                                </div>
+                                <div class="step step-3"><span> 3</span>
+                                    <div class="fa fa-check opaque"></div>
+                                    <div class="step-label">
+                                        Patient Encounter<br>
+                                    </div>
+                                </div>
+                                <div class="step step-4"><span> 4</span>
+                                    <div class="fa fa-check opaque"></div>
+                                    <div class="step-label">
+                                        Screening Test Ordered<br>
+                                    </div>
+                                </div>
+                                <div class="step step-5"><span> 5</span>
+                                    <div class="fa fa-check opaque"></div>
+                                    <div class="step-label">
+                                        Test Performed<br>
+                                    </div>
+                                </div>
+                                <div class="step step-6"><span> 6</span>
+                                    <div class="fa fa-check opaque"></div>
+                                    <div class="step-label">
+                                        Subsequent Pt Encounter<br>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div id="spbContentContainer" style="position: relative; top: 100px;">
+
+                            <section id="spbSection1" class="spbSection1" style="display:block;">
+                                <div style="font-size: 18px; margin: 5px 20px 10px 20px;">
+                                    <p>The Gaps in Care report is a powerful tool that can result in better care outcomes, benefiting the payer (cost savings), the provider (time savings), and the
+                                        patient
+                                        (better health outcomes).</p>
+                                    <!-- <p><i>Click the tab on the right edge of the screen, near the bottom, to toggle demo narration.</i></p> -->
+                                    <input type="button" class="button" value="Start Care Gaps Demo" onclick="Logger.addTextLog('Care Gap Demo Started'); spbNext();">
+                                </div>
+                            </section>
+
+                            <section id="spbSection2" class="spbSection2" style="display:none; position: relative; top: -60px;">
+                                <!-- Grid of patients with open care gaps -->
+                                <div id="dqmPtList" style="margin: 20px; text-align: center; font-size: 18px; color: #d0d0d0; font-weight:bold;">Retrieving Care Gaps...</div>
+                                <script>
+                                    var dqmPtList;
+                                    dqmPtList_render = () => {
+                                        dqmPtList = new Tabulator("#dqmPtList", {
+                                            data: dqmPtListData, //assign data to table
+                                            height: 250, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+                                            layout: "fitColumns", //fit columns to width of table (optional)
+                                            index: "detectedIssueID", //set the index field (~=PK) to what should be a guaranteed unique value
+                                            placeholder: 'Retrieving Open Care Gaps List<br><img src="assets/img/spinner3.gif" height="40">',
+                                            columns: [ //Define Table Columns
+                                                { title: "detectedIssueID", field: "detectedIssueID", hozAlign: "left", visible: false },
+                                                { title: "ptID", field: "ptID", hozAlign: "left", visible: false },
+                                                {   //fcDraggableEvent is converted into an element which can be dragged onto the calendar
+                                                    title: "Patient", field: "ptNameLF", hozAlign: "left", minWidth: 250, headerSort: false, formatter: function (cell, formatterParams) {
+                                                        var value = cell.getValue();
+                                                        return "<span class='fcDraggableEvent'>" + value + "</span>";
+                                                    }
+                                                },
+                                                { title: "Care Gap", field: "careGapName", hozAlign: "left", minWidth: 300, headerSort: false },
+                                                { title: "Status", field: "careGapStatusValue", hozAlign: "left", minWidth: 80, headerSort: false },
+                                                { title: "Days until gap occurs", field: "measureReportAging", hozAlign: "left", minWidth: 120, headerSort: false },
+                                                // { title: "Next Appointment", field: "nextAppointment", sorter: "date", hozAlign: "left", minWidth: 120, headerSort: false, formatter: "html" },
+                                            ],
+                                        });
+
+                                        //Proceed to the next screen when a row is clicked. (For proper role playing, the user should drag a patient to the calendar, but this is provided as a backup.)
+                                        dqmPtList.on("rowClick", function (e, row) {
+                                            dataParams.curCareGap = row.getData();
+                                            spbNext();
+                                            Logger.addTextLog("Care Gap ID: " + row.getData().detectedIssueID + " selected");
+                                        });
+
+                                        //Render the calendar only once the care gaps grid is populated.
+                                        //Populate a temp table with all the table details so that the calendar onClick event can use these details to pass to the next stage
+                                        dataParams.tempGrid = [];
+                                        dqmPtList.on("rowUpdated", function (row) {
+                                            //The other dataLoading/Processing events don't trigger as expected; they trigger only the first time the table is constructed.
+                                            //  Unfortunately this event triggers repeatedly; not great for production but good enough for a demo
+                                            abcCalendar.render();
+                                            dataParams.tempGrid[dataParams.tempGrid.length] = row.getData();
+                                        });
+                                    }
+                                </script>
+
+                                <!-- Calendar for scheduling patients -->
+                                <div id='dqmCalendar' style="width: 96%; left:2%; position: relative;"></div>
+                                <script>
+                                    let abcCalendar;    //globally scoped so that it can be rendered within the dqmPtList
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        abcCalendar = new FullCalendar.Calendar(document.getElementById('dqmCalendar'), {
+                                            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                                            plugins: ['interaction', 'resourceDayGrid', 'resourceTimeGrid'],
+                                            droppable: true,
+                                            defaultView: 'resourceTimeGridDay',
+                                            defaultDate: moment().format('YYYY-MM-DD'),
+                                            editable: true,
+                                            selectable: true,
+                                            eventLimit: true, // allow "more" link when too many events
+                                            weekends: true,
+                                            nowIndicator: true,
+                                            height: document.getElementById('mockEMRFooter').getBoundingClientRect().top - 401,
+                                            // slotDuration: '00:10:00',
+                                            header: {
+                                                left: 'prev,next today',
+                                                center: 'title',
+                                                right: 'resourceTimeGridDay,resourceTimeGridTwoDay,timeGridWeek,dayGridMonth'
+                                            },
+                                            views: {
+                                                resourceTimeGridTwoDay: {
+                                                    type: 'resourceTimeGrid',
+                                                    duration: { days: 2 },
+                                                    buttonText: '2 days',
+                                                }
+                                            },
+                                            // Doctors and their business hours
+                                            allDaySlot: true,
+                                            businessHours: [
+                                                {
+                                                    daysOfWeek: [1, 2, 3, 4, 5],
+                                                    startTime: '08:00',
+                                                    endTime: '17:00',
+                                                },
+                                                {
+                                                    daysOfWeek: [0, 6],
+                                                    startTime: '08:00',
+                                                    endTime: '13:00',
+                                                },
+                                            ],
+                                            resources: [
+                                                { id: 'a', title: 'Dr. P. Adams' },
+                                                { id: 'b', title: 'Dr. N. Bethune', eventColor: '#0020ff' },
+                                                { id: 'c', title: 'Dr. M. Chung', eventColor: 'orange' },
+                                                {
+                                                    id: 'd', title: 'Dr. R. Drew', eventColor: 'lime',
+                                                    businessHours: {
+                                                        startTime: '12:30',
+                                                        endTime: '20:00'
+                                                    }
+                                                }
+                                            ],
+                                            // Vacation for Patch Adams
+                                            events: [
+                                                { id: 'bg1', resourceId: 'a', rendering: 'background', start: moment().subtract(1, 'd').format('YYYY-MM-DD'), end: moment().add(2, 'd').format('YYYY-MM-DD'), color: '#808080' },
+                                                { id: '1', resourceId: 'a', start: moment().subtract(1, 'd').format('YYYY-MM-DD'), end: moment().add(2, 'd').format('YYYY-MM-DD'), title: 'Vacation', backgroundColor: '#808080' },
+                                            ],
+
+                                            // calendar event clicked; advance to the next page
+                                            eventClick: function (info) {
+                                                info.el.style.borderColor = 'red';
+                                                // Get the patient details from the temp table (dataParams.tempGrid)
+                                                for (var i = 0; i < dataParams.tempGrid.length; i++) {
+                                                    if (dataParams.tempGrid[i].ptNameLF == info.event.title) {
+                                                        dataParams.curCareGap = dataParams.tempGrid[i];
+                                                        break;
+                                                    }
+                                                }
+                                                Logger.addTextLog("Care Gap ID: " + dataParams.curCareGap.detectedIssueID + " selected");
+                                                spbNext();
+                                            }
+                                        });
+
+                                        //make names in the Tabulator grid draggable
+                                        var Draggable = FullCalendarInteraction.Draggable;
+                                        var containerEl = document.getElementById('dqmPtList');
+                                        new Draggable(containerEl, {
+                                            itemSelector: '.fcDraggableEvent',
+                                            eventData: function (eventEl) {
+                                                return {
+                                                    title: eventEl.innerText
+                                                };
+                                            }
+                                        });
+
+                                    });
+                                </script>
+                            </section>
+
+                            <section id="spbSection3" class="spbSection3" style="display:none; text-align: center;">
+                                <img src="assets/img/ehr-ghost.png" style="width: 100%; max-width: 2000px; filter: blur(2px) contrast(75%) brightness(120%);">
+                                <div style="border: 3px solid #000; background-color: #ffffffe0; width: 60%; height: 480px; position: absolute; top: 100px; margin-left: 20%;">
+                                    <div style="width: 100%; text-align: center; background-color: #6D6E71; font: 900 18px; color: #fff;">Care Gap Report</div><br>
+                                    <div>Select an open Care Gap below to initiate closing it.<br><br></div>
+                                    <table style="width: 90%; padding: 2px 10px; margin: 0px 5%;">
+                                        <tr>
+                                            <td colspan="2" style="background-color: #2C3E50; color: #fff; font-weight: 900;"><span id="cgrPtName"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="background-color: #8ac; color: #fff;">Open Care Gaps</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="background-color: #79CEF2;">Care Gap</td>
+                                            <td style="background-color: #79CEF2;">Days Open</td>
+                                        </tr>
+                                        <tr class="cgrRow" onclick="spbNext()">
+                                            <td><span id="cgrCareGap"></span></td>
+                                            <td><span id="cgrDaysOpen"></span></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </section>
+
+                            <section id="spbSection4" class="spbSection4" style="display:none;">
+                                <img src="assets/img/ehr-ghost.png" style="width: 100%; max-width: 2000px; filter: blur(2px) contrast(75%) brightness(120%);">
+                                <div style="border: 3px solid #000; background-color: #ffffffe0; width: 60%; height: 480px; position: absolute; top: 100px; margin-left: 20%;">
+                                    <div style="width: 100%; text-align: center; background-color: #6D6E71; font: 900 18px; color: #fff;">Care Gap Report</div><br>
+                                    <div style="text-align: center;">Order any of the screening tests below to close the <span id="cgrCareGap2" style="font-weight: bold;"></span> Care Gap.<br>
+                                    </div>
+                                    <div style="width: fit-content; margin-left: auto; margin-right: auto;">
+                                        <ul id="lrLabReqList" class="dsList" style="list-style: none; padding-left: 0px;">
+                                            <center><img src="assets/img/spinner3.gif" height="40"></center>
+                                        </ul>
+                                    </div>
+                                    <div style="margin-left: 100px; margin-right: 100px; font-size: smaller;" id="lrDSRecommendation"></div>
+                                    <div style="width: fit-content; margin-left: auto; margin-right: auto; visibility: hidden;" id="lrSubmitButton">
+                                        <input type="button" class="button" value="Order Screening Test(s)" onclick="spbNext()">
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section id="spbSection5" class="spbSection5" style="display:none;">
+                                <div id="cgrLabTestDetails"></div>
+                            </section>
+
+                            <section id="spbSection6" class="spbSection6" style="display:none; text-align: center;">
+                                <img src="assets/img/ehr-ghost.png" style="width: 100%; max-width: 2000px; filter: blur(2px) contrast(75%) brightness(120%);">
+                                <div style="border: 3px solid #000; background-color: #ffffffe0; width: 84%; height: 300px; position: absolute; top: 100px; margin-left: 8%;">
+                                    <div style="margin: 20px; text-align: center; font-size: 18px; color: #2C3E50; font-weight:bold;">Recently closed gaps</div>
+                                    <div id="dqmPtList2" style="margin: 20px; text-align: center; font-size: 18px; color: #d0d0d0; font-weight:bold;">Retrieving Care Gaps...</div>
+                                </div>
+                                <script>
+                                    var dqmPtList2;
+                                    dqmPtList2_render = () => {
+                                        dqmPtList2 = new Tabulator("#dqmPtList2", {
+                                            data: dqmPtListData, //assign data to table
+                                            height: 150, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+                                            layout: "fitColumns", //fit columns to width of table (optional)
+                                            index: "detectedIssueID", //set the index field (~=PK) to what should be a guaranteed unique value
+                                            placeholder: 'Retrieving Open Care Gaps List<br><img src="assets/img/spinner3.gif" height="40">',
+                                            columns: [ //Define Table Columns
+                                                { title: "detectedIssueID", field: "detectedIssueID", hozAlign: "left", visible: false },
+                                                { title: "ptID", field: "ptID", hozAlign: "left", visible: false },
+                                                { title: "Patient", field: "ptNameLF", hozAlign: "left", minWidth: 200, headerSort: false },
+                                                { title: "Care Gap", field: "careGapName", hozAlign: "left", minWidth: 300, headerSort: false },
+                                                // { title: "Status", field: "careGapStatusValue", hozAlign: "left", minWidth: 80, headerSort: false },
+                                                // { title: "Days open", field: "measureReportAging", hozAlign: "left", minWidth: 80, headerSort: false },
+                                                { title: "Status", field: "nextAppointment", sorter: "date", hozAlign: "left", minWidth: 200, headerSort: false, formatter: "html" },
+                                            ],
+                                        });
+
+                                        //trigger an alert message when the row is clicked
+                                        dqmPtList2.on("rowClick", function (e, row) {
+                                            dataParams.curCareGap = row.getData();
+                                            alert("Click the reset button (the recycling icon in the header bar) to restart this demo.")
+                                        });
+                                    }
+                                </script>
+                            </section>
+                        </div>
+                        <!-- END: Stepped Progress Bar -->
+
+
+                        <!-- ********** END: Mock EMR Content ********** -->
+                    </div>
+                </div>
+
+                <!-- MockEMR Footer row -->
+                <div id="mockEMRFooter" class="rowFooter">Care Gaps Demo v1.1.7</div>
+            </div> <!-- END: MockEMR -->
+        </div>
+
+        <!-- Right-side panel. Includes story board and API monitor -->
+        <div id="sidepanelRight" class="sidepanelContainer">
+            <div class="abcCardContainer scene--card">
+                <div id="abcStoryCard" class="card">
+
+                    <!-- Front side of card -->
+                    <div class="cardFace cardFaceFront">
+                        <div id="abcActorContainer" class="abcActorContainer">
+                            <div style="display: flex; flex-flow: row nowrap;" class="abcActor">
+                                <div id="abcStoryProvider" class="regular provider"><i class="fa fa-stethoscope"></i> <span style="color: #000;">Provider</span></div>
+                                <div id="abcStoryPatient" class="regular patient"><i class="fa fa-user"></i> <span style="color: #000;">Patient</span></div>
+                                <div id="abcStoryAdmin" class="focus admin"><i class="fa-solid fa-hand-holding-medical"></i> <span style="color: #000;">Admin</span></div>
+                            </div>
+                            <div class="abcActor">
+                                <div class="storyMain" id="abcStoryMain">&nbsp;
+                                    <section id="abcStoryProviderMain" class="abcStorySection"></section>
+                                    <section id="abcStoryPatientMain" class="abcStorySection"></section>
+                                    <section id="abcStoryAdminMain" class="abcStorySection" style="display:block; opacity: 1"></section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Back side of card -->
+                    <div class="cardFace cardFaceBack">
+                        <div id="abcLogger" class="abcAPIContainer"></div>
+                    </div>
+                </div>
+
+                <!-- Card flip button -->
+                <div class="flipButton" onclick="abcCardFlip('abcStoryCard')">
+                    <i id="flipCareButton" class="fa fa-repeat"></i>
+                </div>
+            </div>
+        </div>
+
+        <div id="toggleSidePanelButton" class="circle">
+            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+            <i class="fa fa-chevron-right hide" aria-hidden="true"></i>
+        </div>
+    </div> <!-- END: Sidepanel -->
+
+</body>
+
+
+<!--   Core JS Files   -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+
+<!--  Logger  -->
+<script type="text/javascript" src="assets/js/logger.js"></script>
+
+<!--  JSON Viewer  -->
+<script type="text/javascript" src="assets/js/jquery.json-viewer.js"></script>
+
+<!--  Stepped Progress Bar  -->
+<script type="text/javascript" src="assets/js/steppedProgress.js"></script>
+
+<!-- Tabulator (fhirGrid) -->
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+
+<!-- JSONPath, because it is so much easier than FHIRPath -->
+<script type="text/javascript" src="assets/js/jsonpath-plus7.2.0.cjs"></script>
+
+<!-- FHIRPath (dependency of fhirGrid)-->
+<!-- <script src="assets/js/fhirpath.min.js"></script>
+<script src="assets/js/fhirpath.r4.min.js"></script> -->
+
+<!-- fullCalendar -->
+<script type="text/javascript" src='assets/js/fc-core-main.js'></script>
+<script type="text/javascript" src='assets/js/fc-daygrid-main.js'></script>
+<script type="text/javascript" src='assets/js/fc-interaction-main.js'></script>
+<script type="text/javascript" src='assets/js/fc-timegrid-main.js'></script>
+<script type="text/javascript" src='assets/js/fc-premium-common-main.js'></script>
+<script type="text/javascript" src='assets/js/fc-premium-daygrid-main.js'></script>
+<script type="text/javascript" src='assets/js/fc-premium-timegrid-main.js'></script>
+
+<!-- Mock data (used in full schedule) -->
+<script type="text/javascript" src='assets/js/mocker.js'></script>
+
+<!-- Moment (used in full schedule) -->
+<script type="text/javascript" src='assets/js/moment.min.js'></script>
+
+<!-- flow chart connectors and dynamic grid -->
+<script type="text/javascript" src='assets/js/abcFlow.js'></script>
+
+<!-- Generic functions -->
+<script type="text/javascript" src='assets/js/abcGeneric.js'></script>
+
+</html>
+
+<!-- TODO:
+1. Make RESET button (recycle icon) functional -- either refresh the page, or delete the resources and then refresh the page
+5. Next appt is empty until it has been scheduled
+7. (5) redo this screen. Show a workflow (BPM or SVG, follow the bouncing ball)
+9. $care-gap has disappeared from the API list
+11. Bo: Add sequence flow diagram to presentation
+12. Bo: Add provenance
+DONE 3. Make it prospective: "Days open" ==> "Days until gap [occurs]" (10yrs from last colorectal, 2yrs since fecal DNA, 50th b-day,...)
+    call $care-gap...<12/30 - 12/31>      this will get all the gaps that will be open EOY (prospectively)
+    HACKED: it just shows days until Dec 31.
+DONE 2. Change the style of the tabs so they don't look clickable
+DONE 11 . Start demo with narrative visible
+Rob: 6. "clinical factors" ==> "rationale". (Clean up formatting of DSS)
+DONE 4. b/w (2) and (3) add mock scheduler in the EMR
+DONE 8. (6) show EMR in the background
+DONE 10. (3) remove the recently closed care gaps section. Add this on (6)
+-->
