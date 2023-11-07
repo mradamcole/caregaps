@@ -1,0 +1,108 @@
+.vis-item.compliant {
+    background-color: #4080f0;
+    border-color: #204080;
+    font: 10pt arial;
+    color: #ffffff;
+}
+
+.vis-item.extendCompliant {
+    background-color: rgba(64, 128, 256, 0.3);
+    border-color: #204080;
+    font: 10pt arial;
+    color: #ffffff;
+}
+
+.vis-item.nonCompliant {
+    background-color: #f08040;
+    border-color: #f04040;
+    font: 10pt arial;
+    color: #ffffff;
+}
+
+.vis-item.vis-background.oddMonth {
+    background-color: rgba(252, 255, 98, 0.1);
+}
+
+.vis-item.vis-background.evenMonth {
+    background-color: rgba(252, 255, 98, 0.6);
+}
+
+.vis-item.vis-background {
+    border: none;
+    background-color: rgba(213, 221, 246, 0.6);
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.rowHeading {
+    font: 10pt arial;
+    color: #000000;
+}
+
+.adherenceDot {
+    background: #000000;
+    width: 12px;
+    height: 12px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
+/*--- END Timeline---*/
+
+
+/* Toggle control */
+
+.lbl {
+    position: relative;
+    display: block;
+    height: 15px;
+    width: 33px;
+    background: #d0d0d0;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.lbl:after {
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    display: block;
+    width: 17px;
+    height: 17px;
+    border-radius: 100px;
+    background: #174e95b9;
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.05);
+    content: '';
+    transition: all 0.3s ease;
+}
+
+.lbl:active:after {
+    transform: scale(1.15, 0.85);
+}
+
+.cbx:checked~label {
+    background: #b0b0b0;
+}
+
+.cbx:checked~label:after {
+    left: 15px;
+    background: #174e95b9;
+}
+
+.cbx:disabled~label {
+    background: #d5d5d5;
+    pointer-events: none;
+}
+
+.cbx:disabled~label:after {
+    background: #bcbdbc;
+}
+
+.hidden {
+    display: none;
+}
